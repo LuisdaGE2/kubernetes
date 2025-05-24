@@ -1,132 +1,180 @@
-# Guía de Setup para Microservicios en Kubernetes
+```markdown
+# Guía de Configuración: Microservicios con Kubernetes
 
-## Prerrequisitos
-- Docker Desktop instalado
-- Cuenta en Docker Hub
-- kubectl instalado
+Este documento explica paso a paso cómo preparar y desplegar un conjunto de microservicios en un clúster local de Kubernetes, utilizando Docker y kubectl.
 
-## 1. Habilitar Kubernetes en Docker Desktop
-1. Abrir Docker Desktop
-2. Ir a Settings (Configuración)
-3. En la sección "Kubernetes"
-4. Marcar la casilla "Enable Kubernetes"
-5. Hacer clic en "Apply & Restart"
-6. Esperar a que Kubernetes esté listo
+---
 
-## 2. Verificar la instalación de Kubernetes
+## Requisitos
+
+Antes de comenzar, asegúrate de tener lo siguiente instalado y configurado:
+
+- Docker Desktop
+- kubectl (herramienta de línea de comandos para Kubernetes)
+- Una cuenta en Docker Hub
+
+---
+
+## Paso 1: Activar Kubernetes desde Docker Desktop
+
+1. Abre la aplicación Docker Desktop.
+2. Haz clic en **Settings** (Configuración).
+3. Ve a la pestaña **Kubernetes**.
+4. Activa la opción **Enable Kubernetes**.
+5. Presiona **Apply & Restart** para aplicar los cambios.
+6. Espera a que Kubernetes termine de inicializarse.
+
+---
+
+## Paso 2: Validar que Kubernetes está funcionando
+
+Abre una terminal y ejecuta:
+
 ```bash
 kubectl cluster-info
 kubectl get nodes
 ```
 
-## 3. Construir y subir las imágenes Docker
+Ambos comandos deben devolver información del clúster si todo está funcionando correctamente.
 
-### Importante: Reemplazar el usuario de Docker Hub
-En todos los comandos que siguen, reemplaza `mushunaitor` por tu nombre de usuario de Docker Hub.
+---
 
-También necesitas modificar el archivo `build-and-push.sh` y cambiar la línea:
+## Paso 3: Construcción y Publicación de Imágenes en Docker Hub
+
+> **Importante:** En los siguientes comandos, reemplaza `tuusuario` por tu propio usuario de Docker Hub.
+
+Si utilizas un script como `build-and-push.sh`, asegúrate de modificar la línea:
+
 ```bash
-DOCKER_REGISTRY="mushunaitor"  # Reemplaza con tu usuario de Docker Hub
+DOCKER_REGISTRY="tuusuario"
 ```
-por tu nombre de usuario de Docker Hub.
 
-### Login a Docker Hub
+### Iniciar sesión en Docker Hub
+
 ```bash
 docker login
 ```
 
-### Construir y subir cada microservicio
+### Crear y subir imágenes para cada servicio
 
-#### Para el servicio suma
+#### Servicio suma
+
 ```bash
-docker build -t mushunaitor/suma:1.0.0 ./suma
-docker push mushunaitor/suma:1.0.0
-docker tag mushunaitor/suma:1.0.0 mushunaitor/suma:latest
-docker push mushunaitor/suma:latest
+docker build -t tuusuario/suma:1.0.0 ./suma
+docker push tuusuario/suma:1.0.0
+docker tag tuusuario/suma:1.0.0 tuusuario/suma:latest
+docker push tuusuario/suma:latest
 ```
 
-#### Para el servicio resta
+#### Servicio resta
+
 ```bash
-docker build -t mushunaitor/resta:1.0.0 ./resta
-docker push mushunaitor/resta:1.0.0
-docker tag mushunaitor/resta:1.0.0 mushunaitor/resta:latest
-docker push mushunaitor/resta:latest
+docker build -t tuusuario/resta:1.0.0 ./resta
+docker push tuusuario/resta:1.0.0
+docker tag tuusuario/resta:1.0.0 tuusuario/resta:latest
+docker push tuusuario/resta:latest
 ```
 
-#### Para el servicio ecuacion
+#### Servicio ecuacion
+
 ```bash
-docker build -t mushunaitor/ecuacion:1.0.0 ./ecuacion
-docker push mushunaitor/ecuacion:1.0.0
-docker tag mushunaitor/ecuacion:1.0.0 mushunaitor/ecuacion:latest
-docker push mushunaitor/ecuacion:latest
+docker build -t tuusuario/ecuacion:1.0.0 ./ecuacion
+docker push tuusuario/ecuacion:1.0.0
+docker tag tuusuario/ecuacion:1.0.0 tuusuario/ecuacion:latest
+docker push tuusuario/ecuacion:latest
 ```
 
-#### Para el servicio almacenar
+#### Servicio almacenar
+
 ```bash
-docker build -t mushunaitor/almacenar:1.0.0 ./almacenar
-docker push mushunaitor/almacenar:1.0.0
-docker tag mushunaitor/almacenar:1.0.0 mushunaitor/almacenar:latest
-docker push mushunaitor/almacenar:latest
+docker build -t tuusuario/almacenar:1.0.0 ./almacenar
+docker push tuusuario/almacenar:1.0.0
+docker tag tuusuario/almacenar:1.0.0 tuusuario/almacenar:latest
+docker push tuusuario/almacenar:latest
 ```
 
-## 4. Desplegar en Kubernetes
+---
 
-### Aplicar la configuración
+## Paso 4: Desplegar en Kubernetes
+
+Aplica los archivos de configuración desde el directorio `k8s/`:
+
 ```bash
 kubectl apply -k k8s/
 ```
 
-### Verificar el despliegue
+Verifica que los recursos se hayan desplegado correctamente:
+
 ```bash
-# Ver el estado de los pods
 kubectl get pods
-
-# Ver los servicios
 kubectl get services
-
-# Ver el ingress
 kubectl get ingress
 ```
 
-## 5. Probar la aplicación
+---
 
-### En Postman
-1. Crear una nueva petición POST
-2. URL: http://localhost:8001/sumar
-3. En la opción raw (JSON), enviar:
+## Paso 5: Probar la Aplicación (Postman)
+
+1. Abre Postman.
+2. Crea una nueva solicitud de tipo **POST**.
+3. Usa la siguiente URL:  
+   `http://localhost:8001/sumar`
+4. En el cuerpo (**Body**), selecciona la opción **raw** y elige **JSON**.
+5. Envía lo siguiente:
+
 ```json
 {
-    "a": 15,
-    "b": 17
+  "a": 15,
+  "b": 17
 }
 ```
-4. El resultado en JSON será: 32
 
-## 6. Estructura del proyecto
-- `suma/`: Microservicio para operaciones de suma
-- `resta/`: Microservicio para operaciones de resta
-- `ecuacion/`: Microservicio coordinador
-- `almacenar/`: Microservicio para almacenar resultados
-- `mysql/`: Configuración de la base de datos
-- `k8s/`: Archivos de configuración de Kubernetes
+6. El resultado esperado es:
 
-## 7. Comandos útiles para debugging
+```json
+{
+  "resultado": 32
+}
+```
+
+---
+
+## Estructura General del Proyecto
+
+```plaintext
+.
+├── suma/         # Servicio para sumar
+├── resta/        # Servicio para restar
+├── ecuacion/     # Servicio principal coordinador
+├── almacenar/    # Servicio para guardar resultados
+├── mysql/        # Configuración de base de datos
+└── k8s/          # Archivos de configuración de Kubernetes
+```
+
+---
+
+## Comandos Útiles para Diagnóstico
+
 ```bash
-# Ver logs de un pod específico
+# Ver logs de un pod
 kubectl logs <nombre-del-pod>
 
-# Ver detalles de un pod
+# Obtener detalles de un pod
 kubectl describe pod <nombre-del-pod>
 
-# Ver detalles de un servicio
+# Obtener detalles de un servicio
 kubectl describe service <nombre-del-servicio>
 
-# Acceder a un pod
+# Ingresar a un contenedor dentro de un pod
 kubectl exec -it <nombre-del-pod> -- /bin/bash
 ```
 
-## 8. Limpieza
-Para eliminar todos los recursos de Kubernetes:
+---
+
+## Limpieza de Recursos
+
+Para eliminar todos los recursos creados en Kubernetes:
+
 ```bash
 kubectl delete -k k8s/
 ```
