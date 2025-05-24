@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: almacenar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almacenar
+  template:
+    metadata:
+      labels:
+        app: almacenar
+    spec:
+      containers:
+      - name: almacenar
+        image: gigo2404/almacenar:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_HOST
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_USER
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MYSQL_DATABASE
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_PASSWORD
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almacenar
+spec:
+  selector:
+    app: almacenar
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP 

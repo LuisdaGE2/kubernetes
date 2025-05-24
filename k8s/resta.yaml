@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resta
+  template:
+    metadata:
+      labels:
+        app: resta
+    spec:
+      containers:
+      - name: resta
+        image: gigo2404/resta:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resta
+spec:
+  selector:
+    app: resta
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP 

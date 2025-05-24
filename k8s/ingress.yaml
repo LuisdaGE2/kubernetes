@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /suma
+        pathType: Prefix
+        backend:
+          service:
+            name: suma
+            port:
+              number: 8000
+      - path: /resta
+        pathType: Prefix
+        backend:
+          service:
+            name: resta
+            port:
+              number: 8000
+      - path: /ecuacion
+        pathType: Prefix
+        backend:
+          service:
+            name: ecuacion
+            port:
+              number: 8000
+      - path: /almacenar
+        pathType: Prefix
+        backend:
+          service:
+            name: almacenar
+            port:
+              number: 8000 

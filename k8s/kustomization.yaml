@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - configmap.yaml
+  - mysql-pvc.yaml
+  - mysql.yaml
+  - suma.yaml
+  - resta.yaml
+  - ecuacion.yaml
+  - almacenar.yaml
+  - ingress.yaml
+
+images:
+  - name: ${DOCKER_REGISTRY}/suma
+    newName: gigo2404/suma
+    newTag: latest
+  - name: ${DOCKER_REGISTRY}/resta
+    newName: gigo2404/resta
+    newTag: latest
+  - name: ${DOCKER_REGISTRY}/ecuacion
+    newName: gigo2404/ecuacion
+    newTag: latest
+  - name: ${DOCKER_REGISTRY}/almacenar
+    newName: gigo2404/almacenar
+    newTag: latest 
