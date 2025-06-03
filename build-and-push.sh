@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuración
-DOCKER_REGISTRY="gigo2404"  # Reemplaza con tu usuario de Docker Hub
+DOCKER_REGISTRY="luisdanielge"  # Reemplaza con tu usuario de Docker Hub
 VERSION="1.0.0"
 
 # Servicios a construir

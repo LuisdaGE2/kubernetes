@@ -16,8 +16,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("MYSQL_HOST", "mysql"),
         user=os.getenv("MYSQL_USER", "root"),
-        # password=os.getenv("MYSQL_PASSWORD", "MySQL1969$"),
-        database=os.getenv("MYSQL_DATABASE", "ecuaciones_db")
+        password=os.getenv("MYSQL_PASSWORD", "mypassword123"),
+        database=os.getenv("MYSQL_DATABASE", "resultados_db")
     )
 
 @app.post("/resolver")
@@ -35,20 +35,19 @@ def resolver(valores: Input):
 
     # 2. Persistir en MySQL
     try:
-    	db = get_db_connection()
-    	cursor = db.cursor()
-    	cursor.execute("""
-        INSERT INTO resultados (a, b, c, d, resultado)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (valores.a, valores.b, valores.c, valores.d, resultado))
-    	db.commit()
-
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO resultados (a, b, c, d, resultado)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (valores.a, valores.b, valores.c, valores.d, resultado))
+        db.commit()
     except mysql.connector.Error as err:
-    	raise HTTPException(status_code=500, detail=f"Error en base de datos: {err}")
+        raise HTTPException(status_code=500, detail=f"Error en base de datos: {err}")
     finally:
-    if 'cursor' in locals():
-        cursor.close()
-    if 'db' in locals() and db.is_connected():
-        db.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'db' in locals() and db.is_connected():
+            db.close()
 
     return {"resultado": resultado}

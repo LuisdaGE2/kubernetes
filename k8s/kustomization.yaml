@@ -13,14 +13,14 @@ resources:
 
 images:
   - name: ${DOCKER_REGISTRY}/suma
-    newName: gigo2404/suma
+    newName: luisdanielge/suma
     newTag: latest
   - name: ${DOCKER_REGISTRY}/resta
-    newName: gigo2404/resta
+    newName: luisdanielge/resta
     newTag: latest
   - name: ${DOCKER_REGISTRY}/ecuacion
-    newName: gigo2404/ecuacion
+    newName: luisdanielge/ecuacion
     newTag: latest
   - name: ${DOCKER_REGISTRY}/almacenar
-    newName: gigo2404/almacenar
-    newTag: latest 
+    newName: luisdanielge/almacenar
+    newTag: latest
